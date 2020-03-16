@@ -1,0 +1,220 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: 'Basic VPC setup for client VPN'
+
+Parameters:
+  VpcCIDR:
+    Type: String
+    Description: Please enter the IP range (CIDR notation) for this VPC
+    Default: '10.102.0.0/16'
+  PublicSubnet1CIDRBlock:
+    Description: CIDR Block for PublicSubnet1
+    Type: String
+    Default: '10.102.0.0/28'
+  PublicSubnet2CIDRBlock:
+    Description: CIDR Block for PublicSubnet2
+    Type: String
+    Default: '10.102.0.16/28'
+  PublicSubnet3CIDRBlock:
+    Description: CIDR Block for PublicSubnet3
+    Type: String
+    Default: ''
+  PrivateSubnet1CIDRBlock:
+    Description: CIDR Block for PrivateSubnet1
+    Type: String
+    Default: '10.102.0.32/27'
+  PrivateSubnet2CIDRBlock:
+    Description: CIDR Block for PrivateSubnet2
+    Type: String
+    Default: '10.102.0.64/27'
+  PrivateSubnet3CIDRBlock:
+    Description: CIDR Block for PrivateSubnet3
+    Type: String
+    Default: ''
+  ApplicationName:
+    Description: Name of the application
+    Type: String
+    Default: 'Client-VPN'
+
+Conditions:
+  Use3rdAZ: !Not [!Equals [!Ref PublicSubnet3CIDRBlock, '']]
+
+Resources:
+  #
+  # VPC
+  #
+
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCIDR
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${ApplicationName}-VPC
+
+  #
+  # SUBNETS
+  #
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: !Ref PublicSubnet1CIDRBlock
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${ApplicationName}-public-subnet-1
+
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: !Ref PublicSubnet2CIDRBlock
+      AvailabilityZone: !Select [ 1, !GetAZs '' ]
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${ApplicationName}-public-subnet-2
+
+  PublicSubnet3:
+    Type: AWS::EC2::Subnet
+    Condition: Use3rdAZ
+    Properties:
+      CidrBlock: !Ref PublicSubnet3CIDRBlock
+      AvailabilityZone: !Select [ 2, !GetAZs '' ]
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${ApplicationName}-public-subnet-3
+
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: !Ref PrivateSubnet1CIDRBlock
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${ApplicationName}-private-subnet-1
+
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: !Ref PrivateSubnet2CIDRBlock
+      AvailabilityZone: !Select [ 1, !GetAZs '' ]
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${ApplicationName}-private-subnet-2
+
+  PrivateSubnet3:
+    Type: AWS::EC2::Subnet
+    Condition: Use3rdAZ
+    Properties:
+      CidrBlock: !Ref PrivateSubnet3CIDRBlock
+      AvailabilityZone: !Select [ 2, !GetAZs '' ]
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${ApplicationName}-private-subnet-3
+
+  #
+  # ROUTE TABLES
+  #
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+
+  #
+  # Internet Gateway
+  #
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties: 
+      Tags: 
+        - Key: Name
+          Value: !Sub ${ApplicationName}-NAT-Gateway
+
+  AttachInternetGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties: 
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
+
+  #
+  # ROUTES
+  #
+  PublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      RouteTableId: !Ref PublicRouteTable
+      GatewayId: !Ref InternetGateway
+
+  #
+  # ROUTE TABLE ASSOCIATION
+  #
+  PublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet1
+
+  PublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet2
+
+  PublicSubnet3RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: Use3rdAZ
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet3
+
+Outputs:
+  VpcId:
+    Description: VPC id
+    Value: !Ref VPC
+    Export:
+      Name: !Sub ${AWS::StackName}:VpcId
+
+  PublicSubnet1Id:
+    Description: Public subnet AZ 1
+    Value: !Ref PublicSubnet1
+    Export:
+      Name: !Sub ${AWS::StackName}:PublicSubnet1Id
+
+  PrivateSubnet1Id:
+    Description: Private subnet AZ 1
+    Value: !Ref PrivateSubnet1
+    Export:
+      Name: !Sub ${AWS::StackName}:PrivateSubnet1Id
+
+  PublicSubnet2Id:
+    Description: Public subnet AZ 2
+    Value: !Ref PublicSubnet2
+    Export:
+      Name: !Sub ${AWS::StackName}:PublicSubnet2Id
+
+  PrivateSubnet2Id:
+    Description: Private subnet AZ 2
+    Value: !Ref PrivateSubnet2
+    Export:
+      Name: !Sub ${AWS::StackName}:PrivateSubnet2Id
+
+  PublicSubnet3Id:
+    Description: Public subnet AZ 3
+    Condition: Use3rdAZ
+    Value: !Ref PublicSubnet3
+    Export:
+      Name: !Sub ${AWS::StackName}:PublicSubnet3Id
+
+  PrivateSubnet3Id:
+    Description: Private subnet AZ 3
+    Condition: Use3rdAZ
+    Value: !Ref PrivateSubnet3
+    Export:
+      Name: !Sub ${AWS::StackName}:PrivateSubnet3Id

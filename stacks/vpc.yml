@@ -1,0 +1,9 @@
+parameters:
+  VpcCIDR: 10.102.0.0/16
+  PublicSubnet1CIDRBlock: 10.102.0.0/28
+  PublicSubnet2CIDRBlock: 10.102.0.16/28
+  PublicSubnet3CIDRBlock: ''
+  PrivateSubnet1CIDRBlock: 10.102.0.32/27
+  PrivateSubnet2CIDRBlock: 10.102.0.64/27
+  PrivateSubnet3CIDRBlock: ''
+  ApplicationName: {stackGroup.project}

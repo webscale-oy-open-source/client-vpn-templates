@@ -1,0 +1,21 @@
+{
+  "name": "client-vpn-templates",
+  "version": "1.0.0",
+  "description": "TODO",
+  "scripts": {
+    "version": "bl --version"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webscale-oy/client-vpn-templates.git"
+  },
+  "author": "Webscale Oy - Heikki Ma",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/webscale-oy/client-vpn-templates/issues"
+  },
+  "homepage": "https://github.com/webscale-oy/client-vpn-templates#readme",
+  "devDependencies": {
+    "@webscale-oy/bauble": "^0.15.1"
+  }
+}
