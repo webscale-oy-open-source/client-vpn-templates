@@ -1,0 +1,7 @@
+# Private keys & certificates
+*.key
+*.pem
+*.csr
+*.crt
+
+node_modules/

@@ -1,0 +1,30 @@
+project: demo-client-vpn # Name of the project
+
+regions: eu-west-1
+# Supported regions:
+# eu-central-1 - Frankfurt
+# eu-west-1 - Ireland
+# eu-west-2 - London
+# ap-southeast-1 - Singapore
+# ap-southeast-2 - Sydney
+# us-east-1 - N. Virginia
+# us-east-2 - Ohio
+# us-west-2 - Oregon
+
+data:
+  networks:
+    VpcCIDR: 10.102.0.0/16 # CIDR block for the whole VPC
+    PublicSubnet1CIDRBlock: 10.102.0.0/28 # CIDR block for Public Subnet1
+    PublicSubnet2CIDRBlock: 10.102.0.16/28 # CIDR block for Public Subnet2
+    PublicSubnet3CIDRBlock: 10.102.0.96/28 # CIDR block for Public Subnet3
+    PrivateSubnet1CIDRBlock: 10.102.0.32/27 # CIDR block for Private Subnet1. Minimum /27
+    PrivateSubnet2CIDRBlock: 10.102.0.64/27 # CIDR block for Private Subnet2. Minimum /27
+    PrivateSubnet3CIDRBlock: 10.102.0.128/27 # CIDR block for Private Subnet3. Minimum /27
+
+  vpn:
+    DnsServers: # Maximum of two. Define what DNS servers are used. 
+      - 1.1.1.1
+      - 8.8.8.8
+    ServerCertificateArn: 'arn:aws:acm:REPLACE_ME_WITH_YOUR_ACM_ARN'
+    ClientCidrBlock: 10.105.0.0/22 # CIDR block for VPN clients. Can NOT overlap with subnet's or clients' local CIDR. Minimum /22
+    EnableConnectionLogging: true # Boolean value to enable or disable CloudWatch logging of established connections. 

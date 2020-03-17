@@ -1,0 +1,115 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: 'NAT Gateway'
+
+Parameters:
+  ApplicationName:
+    Description: Name of the application
+    Type: String
+    Default: 'Client-VPN'
+  PublicSubnetIds:
+    Description: Public subnets IDs
+    Type: List<String>
+  PrivateRouteTableIds:
+    Description: Private route table IDs
+    Type: List<String>
+
+Resources:
+  EIP1:
+    Type: AWS::EC2::EIP
+    Properties:
+        Domain: vpc
+
+  NatGateway1:
+    Type: AWS::EC2::NatGateway
+    Properties: 
+      AllocationId: !GetAtt EIP1.AllocationId
+      SubnetId: !Select [0, !Ref PublicSubnetIds]
+      Tags: 
+        - Key: Name
+          Value: !Sub ${ApplicationName}-NAT-Gateway-1
+
+  EIP2:
+    Type: AWS::EC2::EIP
+    Properties:
+        Domain: vpc
+
+  NatGateway2:
+    Type: AWS::EC2::NatGateway
+    Properties: 
+      AllocationId: !GetAtt EIP2.AllocationId
+      SubnetId: !Select [1, !Ref PublicSubnetIds]
+      Tags: 
+        - Key: Name
+          Value: !Sub ${ApplicationName}-NAT-Gateway-2
+
+  EIP3:
+    Type: AWS::EC2::EIP
+    Properties:
+        Domain: vpc
+
+  NatGateway3:
+    Type: AWS::EC2::NatGateway
+    Properties: 
+      AllocationId: !GetAtt EIP3.AllocationId
+      SubnetId: !Select [2, !Ref PublicSubnetIds]
+      Tags: 
+        - Key: Name
+          Value: !Sub ${ApplicationName}-NAT-Gateway-3
+
+  NATRoute1:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Select [0, !Ref PrivateRouteTableIds]
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway1
+
+  NATRoute2:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Select [1, !Ref PrivateRouteTableIds]
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway2
+
+  NATRoute3:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Select [2, !Ref PrivateRouteTableIds]
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway3
+
+Outputs:
+  NatGatewayEIP1:
+    Description: Elastic IP of Nat Gateway
+    Value: !Ref EIP1
+    Export:
+      Name: !Sub ${AWS::StackName}:NatGatewayEIP1
+
+  NatGatewayId1:
+    Description: ID of Nat Gateway
+    Value: !Ref NatGateway1
+    Export:
+      Name: !Sub ${AWS::StackName}:NatGatewayId1
+
+  NatGatewayEIP2:
+    Description: Elastic IP of Nat Gateway
+    Value: !Ref EIP2
+    Export:
+      Name: !Sub ${AWS::StackName}:NatGatewayEIP2
+
+  NatGatewayId2:
+    Description: ID of Nat Gateway
+    Value: !Ref NatGateway2
+    Export:
+      Name: !Sub ${AWS::StackName}:NatGatewayId2
+    
+  NatGatewayEIP3:
+    Description: Elastic IP of Nat Gateway
+    Value: !Ref EIP3
+    Export:
+      Name: !Sub ${AWS::StackName}:NatGatewayEIP3
+
+  NatGatewayId3:
+    Description: ID of Nat Gateway
+    Value: !Ref NatGateway3
+    Export:
+      Name: !Sub ${AWS::StackName}:NatGatewayId3

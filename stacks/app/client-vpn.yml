@@ -1,0 +1,10 @@
+parameters:
+  DnsServers: {{ stackGroup.data.vpn.DnsServers }}
+  ApplicationName: {{ stackGroup.project }}
+  ServerCertificateArn: {{ stackGroup.data.vpn.ServerCertificateArn }}
+  ClientCidrBlock:  {{ stackGroup.data.vpn.ClientCidrBlock }}
+  EnableConnectionLogs: {{ stackGroup.data.vpn.EnableConnectionLogging }}
+  PrivateSubnetIds:
+    resolver: stack-output
+    stack: /infra/vpc.yml
+    output: PrivateSubnetIds

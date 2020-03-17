@@ -1,0 +1,10 @@
+parameters:
+  ApplicationName: {{ stackGroup.project }}
+  PublicSubnetIds:
+    resolver: stack-output
+    stack: /infra/vpc.yml
+    output: PublicSubnetIds
+  PrivateRouteTableIds:
+    resolver: stack-output
+    stack: /infra/vpc.yml
+    output: PrivateRouteTableIds
