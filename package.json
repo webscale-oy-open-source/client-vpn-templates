@@ -5,7 +5,8 @@
   "scripts": {
     "version": "bl --version",
     "launch-infra": "bl launch /infra -y",
-    "launch-app": "bl launch /app -y"
+    "launch-app": "bl launch /app -y",
+    "launch": "bl launch -y"
   },
   "repository": {
     "type": "git",

@@ -5,12 +5,14 @@ Parameters:
   ApplicationName:
     Description: Name of the application
     Type: String
+    Default: 'Client-VPN'
   ServerCertificateArn:
     Description: End of server certificate arn
     Type: String
   ClientCidrBlock:
     Description: The IPv4 address range, in CIDR notation, from which to assign client IP addresses. The CIDR block should be /22 or greater
     Type: String
+    Default: 10.105.0.0/22
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$'
   PrivateSubnetIds:
     Description: IDs of private subnets which will be used as target networks
@@ -48,8 +50,6 @@ Resources:
 
   ClientVPNLogGroup:
     Condition: EnableConnectionLogs
-    DeletionPolicy: Retain
-    UpdateReplacePolicy: Retain
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub /vpn/${ApplicationName}
@@ -59,7 +59,7 @@ Resources:
     Type: AWS::Logs::LogStream
     Properties:
       LogGroupName: !Ref ClientVPNLogGroup
-      LogStreamName: TempLogStream
+      LogStreamName: ConnectionLogs
 
   AuthorizationRule:
     Type: AWS::EC2::ClientVpnAuthorizationRule

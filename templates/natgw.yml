@@ -6,18 +6,12 @@ Parameters:
     Description: Name of the application
     Type: String
     Default: 'Client-VPN'
-
-  PublicSubnetId1:
-    Description: Public subnet1 ID
-    Type: String
-
-  PublicSubnetId2:
-    Description: Public subnet2 ID
-    Type: String
-
-  PublicSubnetId3:
-    Description: Public subnet3 ID
-    Type: String
+  PublicSubnetIds:
+    Description: Public subnets IDs
+    Type: List<String>
+  PrivateRouteTableIds:
+    Description: Private route table IDs
+    Type: List<String>
 
 Resources:
   EIP1:
@@ -29,7 +23,7 @@ Resources:
     Type: AWS::EC2::NatGateway
     Properties: 
       AllocationId: !GetAtt EIP1.AllocationId
-      SubnetId: !Ref PublicSubnetId1
+      SubnetId: !Select [0, !Ref PublicSubnetIds]
       Tags: 
         - Key: Name
           Value: !Sub ${ApplicationName}-NAT-Gateway-1
@@ -43,7 +37,7 @@ Resources:
     Type: AWS::EC2::NatGateway
     Properties: 
       AllocationId: !GetAtt EIP2.AllocationId
-      SubnetId: !Ref PublicSubnetId2
+      SubnetId: !Select [1, !Ref PublicSubnetIds]
       Tags: 
         - Key: Name
           Value: !Sub ${ApplicationName}-NAT-Gateway-2
@@ -57,10 +51,31 @@ Resources:
     Type: AWS::EC2::NatGateway
     Properties: 
       AllocationId: !GetAtt EIP3.AllocationId
-      SubnetId: !Ref PublicSubnetId3
+      SubnetId: !Select [2, !Ref PublicSubnetIds]
       Tags: 
         - Key: Name
           Value: !Sub ${ApplicationName}-NAT-Gateway-3
+
+  NATRoute1:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Select [0, !Ref PrivateRouteTableIds]
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway1
+
+  NATRoute2:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Select [1, !Ref PrivateRouteTableIds]
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway2
+
+  NATRoute3:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Select [2, !Ref PrivateRouteTableIds]
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway3
 
 Outputs:
   NatGatewayEIP1:
