@@ -2,6 +2,11 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: 'NAT Gateway'
 
 Parameters:
+  ApplicationName:
+    Description: Name of the application
+    Type: String
+    Default: 'Client-VPN'
+
   PublicSubnetId1:
     Description: Public subnet1 ID
     Type: String
@@ -13,10 +18,6 @@ Parameters:
   PublicSubnetId3:
     Description: Public subnet3 ID
     Type: String
-    Default: ''
-
-Conditions:
-  Use3rdAZ: !Not [!Equals [!Ref PublicSubnetId3, '']]
 
 Resources:
   EIP1:
@@ -49,13 +50,11 @@ Resources:
 
   EIP3:
     Type: AWS::EC2::EIP
-    Condition: Use3rdAZ
     Properties:
         Domain: vpc
 
   NatGateway3:
     Type: AWS::EC2::NatGateway
-    Condition: Use3rdAZ
     Properties: 
       AllocationId: !GetAtt EIP3.AllocationId
       SubnetId: !Ref PublicSubnetId3
@@ -89,14 +88,12 @@ Outputs:
       Name: !Sub ${AWS::StackName}:NatGatewayId2
     
   NatGatewayEIP3:
-    Condition: Use3rdAZ
     Description: Elastic IP of Nat Gateway
     Value: !Ref EIP3
     Export:
       Name: !Sub ${AWS::StackName}:NatGatewayEIP3
 
   NatGatewayId3:
-    Condition: Use3rdAZ
     Description: ID of Nat Gateway
     Value: !Ref NatGateway3
     Export:

@@ -1,4 +1,5 @@
-project: sandbox-client-vpn
+project: demo-client-vpn
+
 regions: eu-west-1
 # Supported regions:
 # eu-central-1 - Frankfurt
@@ -10,3 +11,19 @@ regions: eu-west-1
 # us-east-2 - Ohio
 # us-west-2 - Oregon
 
+data:
+  networks:
+    VpcCIDR: 10.102.0.0/16
+    PublicSubnet1CIDRBlock: 10.102.0.0/28
+    PublicSubnet2CIDRBlock: 10.102.0.16/28
+    PublicSubnet3CIDRBlock: '10.102.0.96/28'
+    PrivateSubnet1CIDRBlock: 10.102.0.32/27
+    PrivateSubnet2CIDRBlock: 10.102.0.64/27
+    PrivateSubnet3CIDRBlock: '10.102.0.128/27'
+
+  vpn:
+    DnsServers: # Maximum of two
+      - 1.1.1.1
+      - 8.8.8.8
+    ServerCertificateArn: 'arn:aws:acm:_REPLACE_THIS_WITH_YOUR_ACM_ARN'
+    ClientCidrBlock: 10.105.0.0/22

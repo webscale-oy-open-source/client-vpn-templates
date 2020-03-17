@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "TODO",
   "scripts": {
-    "version": "bl --version"
+    "version": "bl --version",
+    "launch-infra": "bl launch /infra -y",
+    "launch-app": "bl launch /app -y"
   },
   "repository": {
     "type": "git",

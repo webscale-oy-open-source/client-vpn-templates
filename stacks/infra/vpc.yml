@@ -1,0 +1,11 @@
+parameters:
+  VpcCIDR: {{ stackGroup.data.networks.VpcCIDR }}
+  PublicSubnet1CIDRBlock: {{ stackGroup.data.networks.PublicSubnet1CIDRBlock }}
+  PublicSubnet2CIDRBlock: {{ stackGroup.data.networks.PublicSubnet2CIDRBlock }}
+  PrivateSubnet1CIDRBlock: {{ stackGroup.data.networks.PrivateSubnet1CIDRBlock }}
+  PrivateSubnet2CIDRBlock: {{ stackGroup.data.networks.PrivateSubnet2CIDRBlock }}
+  PublicSubnet3CIDRBlock: {{ stackGroup.data.networks.PublicSubnet3CIDRBlock }}
+  PrivateSubnet3CIDRBlock: {{ stackGroup.data.networks.PrivateSubnet3CIDRBlock }}
+
+  ApplicationName: {{ stackGroup.project }}
+
