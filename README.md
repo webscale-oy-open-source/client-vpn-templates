@@ -1,6 +1,6 @@
 # Building durable VPNs with AWS Managed VPN
 
-Blog post:
+Blog post: https://webscale.fi/blogi/building-durable-vpns-with-aws-managed-vpn/
 
 ## Requisite
 * AWS IAM role or user - with sufficient permissions
