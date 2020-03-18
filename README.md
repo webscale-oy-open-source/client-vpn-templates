@@ -1,10 +1,10 @@
-# Building durable VPN with AWS Managed VPN
+# Building durable VPNs with AWS Managed VPN
 
 Blog post:
 
 ## Requisite
 * AWS IAM role or user - with sufficient permissions
-* AWS-ClI - installed and configured
+* AWS-CLI - installed and configured
 * Node 9.0.0 or later (If Bauble is used) 
 
 ## Instructions

@@ -1,7 +1,7 @@
 {
   "name": "client-vpn-templates",
   "version": "1.0.0",
-  "description": "TODO",
+  "description": "Building durable VPNs with AWS Managed VPN",
   "scripts": {
     "version": "bl --version",
     "launch-infra": "bl launch /infra -y",
